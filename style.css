@@ -1,0 +1,340 @@
+/* --- CÁC THIẾT LẬP CHUNG --- */
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+    background-color: #f7f7f7;
+    /* ĐÃ THÊM: Xóa hiệu ứng xanh mờ khi chạm trên Android/di động */
+    -webkit-tap-highlight-color: transparent; 
+}
+
+/* --- HOẠT ẢNH CHUNG --- */
+@keyframes breathing {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes jump-loop {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0); }
+}
+
+/* --- CSS CHO NÚT SKIP (DEV MODE) --- */
+#skip-button {
+    position: fixed; /* QUAN TRỌNG: Làm nút nổi, không chiếm không gian */
+    top: 10px; /* Cố định cách mép trên 10px */
+    left: 10px; /* Cố định cách mép trái 10px */
+    z-index: 1000; /* Đảm bảo nút luôn nằm trên cùng */
+    padding: 5px 10px;
+    background-color: rgba(255, 99, 71, 0.7); /* Màu đỏ cam, có độ trong suốt */
+    color: white;
+    border: 1px solid white; /* Thêm viền trắng mỏng cho dễ nhìn */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px; /* Font chữ nhỏ hơn */
+    line-height: 1; /* Cố định chiều cao dòng */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Thêm bóng mờ */
+    transition: background-color 0.2s; /* Làm mượt hiệu ứng khi di chuột */
+}
+
+#skip-button:active {
+    background-color: #ff6347; /* Đổi màu khi nhấp để có phản hồi */
+}
+
+/* --- CSS Cho Giai đoạn 1 (ROAD RUN) --- */
+.game-stage {
+    display: flex; 
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+}
+
+#stage1-dino {
+    background-color: #87ceeb;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* ĐÃ SỬA: Dùng width: 95% thay vì 90vw để ổn định giao diện trên di động */
+.game-area {
+    position: relative;
+    width: 95%; 
+    max-width: 600px;
+    height: 300px;
+    background-color: #e0f7fa;
+    border: 3px solid #333;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#score-display {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 10;
+}
+
+#ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 25px;
+    background-color: #5d4037;
+    z-index: 4;
+    background-image: linear-gradient(to right, white 33%, transparent 33%, transparent 66%, white 66%);
+    background-size: 50px 5px;
+    background-repeat: repeat-x;
+    background-position-y: 15px;
+}
+
+/* --- NHÂN VẬT DINO: ANIMATION CHẠY VÀ LẬT --- */
+@keyframes run_animation {
+    0% { transform: scaleX(-1) translateY(0px); }
+    50% { transform: scaleX(-1) translateY(-3px); }
+    100% { transform: scaleX(-1) translateY(0px); }
+}
+
+#character {
+    position: absolute;
+    left: 50px;
+    bottom: 10px;
+    font-size: 35px;
+    z-index: 5;
+    transition: bottom 0.15s ease-out, transform 0.1s;
+    cursor: default;
+    transform: scaleX(-1);
+}
+
+#character:not(.draggable) {
+    animation: run_animation 0.3s steps(2) infinite;
+}
+
+#character.jumping {
+    animation: none;
+    transform: scaleX(-1) rotate(0deg) !important;
+}
+
+#character.rotated-crash {
+    transform: scaleX(-1) rotate(90deg) !important;
+}
+
+/* Obstacle (Cây Cối) */
+.obstacle {
+    position: absolute;
+    right: -50px;
+    bottom: 10px;
+    width: 25px;
+    height: 50px;
+    background-color: transparent;
+    font-size: 30px;
+    z-index: 5;
+    user-select: none;
+}
+
+/* --- Background Houses --- */
+.bg-house {
+    position: absolute;
+    font-size: 80px;
+    bottom: 10px;
+    z-index: 2;
+    transition: left 0s linear;
+}
+
+/* --- Mây (Clouds) --- */
+#cloud-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cloud-piece {
+    position: absolute;
+    font-size: 50px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    animation: cloud-scroll var(--duration) linear infinite;
+    z-index: 1;
+}
+
+@keyframes cloud-scroll {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-150%); }
+}
+
+/* Mailbox - Giai đoạn 1 */
+#mailbox {
+    display: none;
+    position: absolute;
+    right: 50%;
+    bottom: 10px;
+    font-size: 60px;
+    z-index: 5;
+    transform: translateX(50%);
+    user-select: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+    cursor: default;
+}
+
+/* -------------------------------------- */
+/* --- CSS Cho Giai đoạn 2 (DRAG) MỚI --- */
+/* -------------------------------------- */
+
+#stage2-drag {
+    /* Nền như trong hộp thư */
+    background-color: #3a3a3a; /* Màu tối tượng trưng cho không gian hòm thư */
+    color: #fff;
+}
+
+.drag-area {
+    background-color: #4a4a4a !important; /* Nền của vùng chơi tối hơn */
+    border: 3px solid #777 !important;
+}
+
+#mailbox-drag {
+    /* Đã định nghĩa inline trong HTML */
+}
+
+#draggable-letter {
+    z-index: 10;
+}
+
+/* ----------------------------------------------------------------- */
+/* --- CSS Cho Giai đoạn 3 (CATCH LETTER) & Giai đoạn 4 (FINAL) --- */
+/* ----------------------------------------------------------------- */
+
+/* SỬA: Màu nền bầu trời xanh cho Stage 3 */
+#stage3-catch {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background: linear-gradient(to bottom, #87ceeb, #4682b4); 
+    position: relative;
+    overflow: hidden;
+}
+
+#letter-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Animation xoay cho thư rơi (Giai đoạn 3) */
+@keyframes rotate_fall {
+    from { transform: translateY(-10vh) rotate(0deg); }
+    to { transform: translateY(110vh) rotate(360deg); }
+}
+/* Animation rơi thẳng cho thư hồng (không xoay quá nhiều) */
+@keyframes fall_only {
+    from { transform: translateY(-10vh) rotate(0deg); }
+    to { transform: translateY(110vh) rotate(0deg); }
+}
+
+
+.falling-letter {
+    position: absolute;
+    top: -50px;
+    font-size: 30px;
+    cursor: pointer;
+    pointer-events: auto;
+    color: #ffffff;
+    text-shadow: none;
+    opacity: 1;
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+    /* Sử dụng biến CSS --duration và --delay từ JS */
+    animation: rotate_fall var(--duration) linear var(--delay) infinite;
+    transform: translateZ(0);
+}
+
+.pink-letter {
+    color: #ff1493;
+    font-size: 45px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+    z-index: 20;
+    /* Áp dụng animation rơi thẳng cho thư hồng để dễ nhận biết */
+    animation: fall_only var(--duration) linear var(--delay) infinite !important;
+}
+
+#stage4-final {
+    background-color: #f7f3e8;
+    padding: 20px;
+    /* ĐÃ XÓA animation celebratory_pulse */
+}
+
+/* SỬA: Giao diện Thư Cuối cùng */
+.birthday-card {
+    background: linear-gradient(145deg, #fff0f5, #f0ffff); /* Nền hồng/xanh nhạt */
+    padding: 40px 30px;
+    border-radius: 10px; /* Góc bo tròn hơn */
+    /* ĐÃ XÓA hiệu ứng thở */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px 5px rgba(255, 20, 147, 0.4); /* Bóng 3D và hào quang hồng */
+    max-width: 90%;
+    width: 500px;
+    border: 3px solid #ff69b4; /* Viền màu hồng đậm */
+    text-align: left;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* --- Confetti (BONG BÓNG) Effect CSS --- */
+@keyframes rise {
+    0% {
+        transform: translateY(0) scale(0);
+        opacity: 0;
+    }
+    10% {
+        transform: translateY(-5vh) scale(1);
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) scale(0.5);
+        opacity: 0;
+    }
+}
+
+#confetti-container {
+    position: fixed;
+    top: 100vh; /* Bắt đầu từ dưới cùng */
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.confetti-piece {
+    position: absolute;
+    z-index: 998;
+    border-radius: 50%; /* Hình tròn/Bong bóng */
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    /* Dùng animation 'rise' mới */
+    animation: rise var(--duration) ease-out var(--delay) forwards; 
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minigame Sinh Nhật Bí Mật - DEMO KỶ NIỆM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <button id="skip-button" onclick="skipToWin()">[DEV] SKIP TO WIN</button>
+
+    <div id="stage1-dino" class="game-stage active-stage">
+        <h2 id="stage1-instruction">Bấm hoặc chạm vào màn hình để NHẢY!
+Vượt qua 10 cây để mở khóa thư.</h2>
+        <div class="game-area">
+            <div id="cloud-container"></div>
+            <div id="score-display">ĐIỂM: 0</div>
+            <div id="character">🏃‍♂️</div>
+            <div id="ground"></div>
+            <div id="mailbox" class="locked">📪</div>
+        </div>
+    </div>
+
+    <div id="stage2-drag" class="game-stage" style="display: none;"> 
+        <h2 id="stage2-drag-instruction">
+            Tuyệt vời! Kéo lá thư 💌 vào thùng thư 📪 để mở khóa giai đoạn tiếp theo!
+        </h2>
+        <div class="drag-area" style="position: relative; width: 90vw; max-width: 600px; height: 300px; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
+            <div id="mailbox-drag" style="position: absolute; right: 50%; bottom: 10px; font-size: 60px; z-index: 5; transform: translateX(50%);">📪</div>
+            <div id="draggable-letter" style="position: absolute; font-size: 40px; cursor: grab; display: none;">💌</div>
+            </div>
+    </div>
+
+    <div id="stage3-catch" class="game-stage" style="display: none;"> 
+        <h2 class="stage-instruction" style="color: #ffb6c1; text-shadow: 1px 1px 3px #4b0082;">
+            Rất nhiều thư đang rơi!
+Hãy chạm vào lá thư màu HỒNG để tìm được thư của bạn.
+        </h2>
+        <div id="cloud-container"></div>  <div id="letter-container"></div>
+    </div>
+    
+    <div id="stage4-final" class="game-stage" style="display: none;"> 
+        <div id="confetti-container"></div> <div class="birthday-card">
+            <h1 class="heading">THÔNG ĐIỆP BÍ MẬT ĐÃ ĐƯỢC MỞ KHÓA!</h1>
+            <p id="final-message" class="message"></p>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
